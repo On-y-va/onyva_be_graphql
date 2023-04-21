@@ -1,5 +1,5 @@
 Rails.application.routes.draw do
-  post "/onyva", to: "graphql#execute"
+  post "/api/v1/onyva", to: "graphql#execute"
 
   end
 
