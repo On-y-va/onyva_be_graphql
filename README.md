@@ -20,16 +20,15 @@ At its core, Onyva is committed to providing an exceptional travel experience fo
 
 
 ## Endpoint
-
+All requests are made to one endpoint:
+```http
+POST http://localhost:5000/api/v1/onyva
+```
+Click the `details` drop down for response details.
 <details close>
 
 
 ### Get all Users
-
-
-```http
-POST http://localhost:5000/onyva
-```
 
 <details close>
 <summary>  Details </summary>
@@ -37,14 +36,14 @@ POST http://localhost:5000/onyva
     
 Query: <br>
 ```json
-{ 
-    allUsers {
-        id
-        firstName
-        lastName
-        email
+query { 
+        users {
+            id
+            firstName
+            lastName
+            email
+        }
     }
-}
 ```
 
 | Code | Description |
@@ -54,7 +53,6 @@ Query: <br>
 Example Value:
 
 ```json
-
 {
     "data": {
         "allUsers": [
@@ -82,7 +80,51 @@ Example Value:
 ```
 
 </details>
+
+---
+
+### Get one user
+
+<details close>
+<summary>  Details </summary>
+<br>
+    
+Query: <br>
+```json
+query { 
+        user(id: 1) {
+            id
+            firstName
+            lastName
+            email
+        }
+    }
+```
+
+| Code | Description |
+| :--- | :--- |
+| 200 | `OK` |
+
+Example Value:
+
+```json
+{
+    "data": {
+        "user": {
+            "id": "1",
+            "firstName": "John",
+            "lastName": "Doe",
+            "email": "john.doe@example.com"
+        }
+    }
+}
+
+```
+
 </details>
+</details>
+
+---
 
 ## Status Codes
 
@@ -128,8 +170,6 @@ Pull down the [Front-end repo](https://github.com/On-y-va/onyva_fe). Set up inst
 
 
 ## Contributors
-
-<i>All participants in this project are graduates from the Turing School of Software & Design.</i> <br> <br>
   
 <b>Anhnhi Tran, PT, DPT</b> <br>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; GitHub: <a href="https://github.com/anhtran811">@anhtran811</a> <br>
