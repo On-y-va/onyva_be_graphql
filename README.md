@@ -55,7 +55,7 @@ Example Value:
 ```json
 {
     "data": {
-        "allUsers": [
+        "users": [
             {
                 "id": "1",
                 "firstName": "John",
