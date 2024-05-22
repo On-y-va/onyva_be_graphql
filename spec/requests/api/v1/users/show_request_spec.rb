@@ -1,58 +1,57 @@
 require 'rails_helper'
 
 describe 'Users show API' do
-  describe 'GET /users/:id' do
+  describe 'POST /onyva' do
+    let(:user) { create(:user)}
+    let(:valid_query) do
+      <<-GRAPHQL
+      query {
+        user(id: #{user.id}) {
+            firstName
+            lastName
+            id
+            email
+        }
+     }
+      GRAPHQL
+    end
+    let(:invalid_query) do
+      <<-GRAPHQL
+      query {
+        user(id: lsdkfn) {
+            firstName
+            lastName
+            id
+            email
+        }
+     }
+      GRAPHQL
+    end
     context 'when the user exists' do
-      it 'can get one user by their id' do
-        user = create(:user)
 
-        get "/api/v1/users/#{user.id}"
+      it 'can get one user by their id' do 
+        post "/api/v1/onyva", params: {query: valid_query}
 
         user_response = JSON.parse(response.body, symbolize_names: true)
 
         expect(response).to be_successful
-
-        expect(user_response).to have_key(:data)
-        expect(user_response[:data]).to have_key(:attributes)
-
-        expect(user_response[:data][:id]).to be_a(String)
-
-        user_data = user_response[:data][:attributes]
-        
-        expect(user_data).to have_key(:first_name)
-        expect(user_data[:first_name]).to be_a(String)
-        
-        expect(user_data).to have_key(:last_name)
-        expect(user_data[:last_name]).to be_a(String)
-        
-        expect(user_data).to have_key(:email)
-        expect(user_data[:email]).to be_a(String)
-        
-        expect(user_data).to have_key(:phone_number)
-        expect(user_data[:phone_number]).to be_a(String)
-
-        expect(user_data).to have_key(:emergency_contact_name)
-        expect(user_data[:emergency_contact_name]).to be_nil
-        
-        expect(user_data).to have_key(:emergency_contact_phone_number)
-        expect(user_data[:emergency_contact_phone_number]).to be_nil
+        expect(user_response[:data][:user].keys).to eq([:firstName, :lastName, :id, :email])
+        user_response[:data][:user].values.each do |value|
+          expect(value).to be_a String
+        end
       end
     end
 
     context 'when the user does not exist' do
       it 'responds with an error' do
-        user = create(:user)
+        post "/api/v1/onyva", params: {query: invalid_query}
 
-        get "/api/v1/users/#{User.last.id+1}"
-
-        expect(response).to_not be_successful
+        error = JSON.parse(response.body, symbolize_names: true)
+        expect(response).to be_successful
         
-        user = JSON.parse(response.body, symbolize_names: true)
-
-        expect(response.status).to eq(404)
-        expect(user).to have_key(:error)
-       
-        expect(user[:error].first[:title]).to match(/Couldn't find User with 'id'=#{User.last.id+1}/)
+        expect(response.status).to eq(200)
+        expect(error[:errors].first.keys).to eq([:message, :locations, :path, :extensions])
+        expect(error[:errors].first[:message]).to eq("Argument 'id' on Field 'user' has an invalid value (lsdkfn). Expected type 'ID!'.")
       end
     end
   end
